@@ -7,6 +7,8 @@ export { default as MenuItem } from './Navbar/MenuItem';
 export { default as Navbar } from './Navbar/Navbar';
 export { default as Search } from './Navbar/Search';
 export { default as UserMenu } from './Navbar/UserMenu';
+export * from './index';
 export { default as Input } from './inputs/Input';
+export { default as LoginModal } from './modals/LoginModal';
 export { default as Modal } from './modals/Modal';
 export { default as RegisterModal } from './modals/RegisterModal';

@@ -5,12 +5,28 @@ import { useState } from "react";
 import Avatar from "../Avatar";
 import MenuItem from "./MenuItem";
 
-import { AiOutlineMenu } from "react-icons/ai";
-import { UseRegisterModal } from "@/app/hooks";
+import { AiOutlineMenu, AiOutlineUserAdd } from "react-icons/ai";
+import {
+  BiBuildingHouse,
+  BiTrip,
+  BiLogOutCircle,
+  BiLogInCircle,
+} from "react-icons/bi";
+import { BsHouseAdd } from "react-icons/bs";
+import { MdOutlineFavoriteBorder } from "react-icons/md";
+import { IoTicketOutline } from "react-icons/io5";
+import { UseLoginModal, UseRegisterModal } from "@/app/hooks";
+import { signOut } from "next-auth/react";
+import { SafeUser } from "@/app/types";
 
-const UserMenu = () => {
+interface Props {
+  currentUser?: SafeUser | null;
+}
+
+const UserMenu: React.FC<Props> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
   const registerModal = UseRegisterModal();
+  const loginModal = UseLoginModal();
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
@@ -35,10 +51,50 @@ const UserMenu = () => {
       {isOpen && (
         <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
           <div className="flex flex-col cursor-pointer">
-            <>
-              <MenuItem onClick={registerModal.onOpen} label="Regístrate" />
-              <MenuItem onClick={() => {}} label="Inicia sesión" />
-            </>
+            {currentUser ? (
+              <>
+                <MenuItem
+                  onClick={() => {}}
+                  label="Mis propiedades"
+                  icon={BiBuildingHouse}
+                />
+                <MenuItem onClick={() => {}} label="Mis viajes" icon={BiTrip} />
+                <MenuItem
+                  onClick={() => {}}
+                  label="Mis favoritos"
+                  icon={MdOutlineFavoriteBorder}
+                />
+                <MenuItem
+                  onClick={() => {}}
+                  label="Mis reservaciones"
+                  icon={IoTicketOutline}
+                />
+                <MenuItem
+                  onClick={() => {}}
+                  label="Mi espacio en Airbnb"
+                  icon={BsHouseAdd}
+                />
+                <hr />
+                <MenuItem
+                  onClick={() => signOut()}
+                  label="Cerrar sesión"
+                  icon={BiLogOutCircle}
+                />
+              </>
+            ) : (
+              <>
+                <MenuItem
+                  onClick={registerModal.onOpen}
+                  label="Regístrate"
+                  icon={AiOutlineUserAdd}
+                />
+                <MenuItem
+                  onClick={loginModal.onOpen}
+                  label="Inicia sesión"
+                  icon={BiLogInCircle}
+                />
+              </>
+            )}
           </div>
         </div>
       )}
