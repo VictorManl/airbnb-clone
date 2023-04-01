@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import axios from "axios";
 import { AiFillGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -51,6 +50,11 @@ const LoginModal = () => {
     });
   };
 
+  const toggle = () => {
+    loginModal.onClose();
+    registerModal.onOpen();
+  };
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading
@@ -95,12 +99,12 @@ const LoginModal = () => {
       />
       <div className="text-neutral-500 text-center mt-4 font-light">
         <div className="flex flex-row items-center justify-center gap-3">
-          <div>Ya tienes una cuenta ?</div>
+          <div>Primera ves en Airbnb ?</div>
           <div
-            onClick={loginModal.onClose}
+            onClick={toggle}
             className="text-neutral-800 cursor-pointer hover:underline"
           >
-            Iniciar sesión
+            Crear cuenta
           </div>
         </div>
       </div>
