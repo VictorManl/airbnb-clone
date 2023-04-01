@@ -15,7 +15,7 @@ import {
 import { BsHouseAdd } from "react-icons/bs";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
 import { IoTicketOutline } from "react-icons/io5";
-import { UseLoginModal, UseRegisterModal } from "@/app/hooks";
+import { UseLoginModal, UseRegisterModal, UseRentModal } from "@/app/hooks";
 import { signOut } from "next-auth/react";
 import { SafeUser } from "@/app/types";
 
@@ -25,17 +25,30 @@ interface Props {
 
 const UserMenu: React.FC<Props> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
+
   const registerModal = UseRegisterModal();
   const loginModal = UseLoginModal();
+  const rentModal = UseRentModal();
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
   };
 
+  const onRent = () => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    rentModal.onOpen();
+  };
+
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
-        <div className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition-colors cursor-pointer">
+        <div
+          onClick={onRent}
+          className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition-colors cursor-pointer"
+        >
           Pon tu espacio en Airbnb
         </div>
         <div
@@ -70,7 +83,7 @@ const UserMenu: React.FC<Props> = ({ currentUser }) => {
                   icon={IoTicketOutline}
                 />
                 <MenuItem
-                  onClick={() => {}}
+                  onClick={onRent}
                   label="Mi espacio en Airbnb"
                   icon={BsHouseAdd}
                 />

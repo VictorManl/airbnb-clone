@@ -7,3 +7,37 @@ body,
 :root {
   height: 100%;
 }
+
+.categorias::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.categorias::-webkit-scrollbar:vertical {
+  width: 10px;
+}
+
+.categorias::-webkit-scrollbar-button:increment,
+.categorias::-webkit-scrollbar-button {
+  display: none;
+}
+
+.categorias::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+.categorias::-webkit-scrollbar-thumb {
+  background-color: #505050;
+  border-radius: 20px;
+  border: 2px solid #f1f2f3;
+}
+
+.categorias::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.leaflet-bottom,
+.leaflet-control,
+.leaflet-pane,
+.leaflet-top {
+  z-index: 0 !important;
+}

@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import { Nunito } from "next/font/google";
-import { LoginModal, Navbar, RegisterModal } from "./components";
+import { LoginModal, Navbar, RegisterModal, RentModal } from "./components";
 import getCurrentUser from "./actions/getCurrentUser";
 
 export const metadata = {
@@ -28,6 +28,7 @@ export default async function RootLayout({
         <Navbar currentUser={currenUser} />
         <RegisterModal />
         <LoginModal />
+        <RentModal />
         {children}
       </body>
     </html>
