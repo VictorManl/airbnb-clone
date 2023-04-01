@@ -5,10 +5,18 @@ import { useMemo, useState } from "react";
 import { UseRentModal } from "@/app/hooks";
 import Heading from "../Heading";
 import Modal from "./Modal";
-import { CategoryInput, Counter, CountrySelect, ImageUpload } from "../inputs";
+import {
+  CategoryInput,
+  Counter,
+  CountrySelect,
+  ImageUpload,
+  Input,
+} from "../inputs";
 
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 enum Steps {
   Category = 0,
@@ -21,8 +29,10 @@ enum Steps {
 
 const RentModal = () => {
   const rentModal = UseRentModal();
+  const router = useRouter();
 
   const [step, setSteps] = useState(Steps.Category);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -35,9 +45,9 @@ const RentModal = () => {
     defaultValues: {
       category: "",
       location: null,
-      invitados: 1,
-      habitaciones: 1,
-      baños: 1,
+      guestCount: 1,
+      roomCount: 1,
+      bathroomCount: 1,
       imageSrc: "",
       price: 1,
       title: "",
@@ -47,9 +57,9 @@ const RentModal = () => {
 
   const category = watch("category");
   const location = watch("location");
-  const guestCount = watch("invitados");
-  const habitaciones = watch("habitaciones");
-  const baños = watch("baños");
+  const guestCount = watch("guestCount");
+  const roomCount = watch("roomCount");
+  const bathroomCount = watch("bathroomCount");
   const imageSrc = watch("imageSrc");
 
   const Map = useMemo(
@@ -74,6 +84,29 @@ const RentModal = () => {
 
   const onNext = () => {
     setSteps((v) => v + 1);
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if (step !== Steps.Price) {
+      return onNext();
+    }
+
+    setIsLoading(true);
+
+    axios
+      .post("/api/listings", data)
+      .then(() => {
+        router.refresh();
+        reset();
+        setSteps(Steps.Category);
+        rentModal.onClose();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const actionLabel = useMemo(() => {
@@ -134,21 +167,21 @@ const RentModal = () => {
           title="Invitados"
           subtitle="Cuantas personas pueden estar ?"
           value={guestCount}
-          onChange={(values) => setCustomValue("invitados", values)}
+          onChange={(values) => setCustomValue("guestCount", values)}
         />
         <hr />
         <Counter
           title="Habitaciones"
           subtitle="Cuantas habitaciones tiene ?"
-          value={habitaciones}
-          onChange={(values) => setCustomValue("habitaciones", values)}
+          value={roomCount}
+          onChange={(values) => setCustomValue("roomCount", values)}
         />
         <hr />
         <Counter
           title="Baños"
           subtitle="Cuantas baños tiene ?"
-          value={baños}
-          onChange={(values) => setCustomValue("baños", values)}
+          value={bathroomCount}
+          onChange={(values) => setCustomValue("bathroomCount", values)}
         />
       </div>
     );
@@ -169,11 +202,60 @@ const RentModal = () => {
     );
   }
 
+  if (step === Steps.Description) {
+    bodyContet = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Como describirias tu espacio ?"
+          subtitle="Breve descripcion de lo mejor de tu espacio"
+        />
+
+        <Input
+          id="title"
+          label="Titulo"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+        <Input
+          id="description"
+          label="Descripción"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
+  if (step === Steps.Price) {
+    bodyContet = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Cuanto vale tu espacio ?"
+          subtitle="El mejor precio para tu espacio!"
+        />
+
+        <Input
+          id="price"
+          label="Precio"
+          formatPrice
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
   return (
     <Modal
       title="Mi espacio en Airbnb!"
       isOpen={rentModal.isOpen}
-      onSubmit={onNext}
+      onSubmit={handleSubmit(onSubmit)}
       actionLabel={actionLabel}
       secondaryLabel={secondaryAction}
       secondaryAction={step === Steps.Category ? undefined : onBack}
